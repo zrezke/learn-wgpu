@@ -1,5 +1,4 @@
 use std::num::NonZeroU32;
-
 use anyhow::*;
 use image::GenericImageView;
 
@@ -9,6 +8,15 @@ pub struct Texture {
     pub sampler: wgpu::Sampler,
 }
 
+fn get_rgb_dimensions(img_dim: (u32, u32)) -> (u32, u32) {
+    let original_elements = img_dim.0 as f64 * img_dim.1 as f64 * 3.0;
+    let new_elements = (original_elements / 4.0).sqrt();  // sqrt to get width = height
+    let new_dim = new_elements.round() as u32;  // round to nearest integer
+
+    (new_dim, new_dim)
+}
+// 3840x2160
+
 impl Texture {
     pub fn from_bytes(
         device: &wgpu::Device,
@@ -17,6 +25,7 @@ impl Texture {
         label: &str,
     ) -> Result<Self> {
         let img = image::load_from_memory(bytes)?;
+        println!("Image len: {:?}", img.as_bytes().len());
         Self::from_image(device, queue, &img, Some(label))
     }
 
@@ -26,9 +35,11 @@ impl Texture {
         img: &image::DynamicImage,
         label: Option<&str>,
     ) -> Result<Self> {
-        let rgba = img.to_rgba8();
-        let dimensions = img.dimensions();
-
+        // let rgba = img.to_rgba8();
+        let rgba = img.to_rgb8();
+        let dimensions = get_rgb_dimensions(img.dimensions());
+        // let dimensions = img.dimensions();
+        println!("Dimensions: {:?}", dimensions);
         let size = wgpu::Extent3d {
             width: dimensions.0,
             height: dimensions.1,
