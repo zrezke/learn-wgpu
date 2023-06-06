@@ -33,44 +33,79 @@ var s_diffuse: sampler;
 //     // return textureSample(t_diffuse, s_diffuse, in.tex_coords);
 // }
 
+fn decode_nv12(in: VertexOutput) -> vec4<f32> {
+    let width = 1920.0;
+    let height = 1080.0;
+    let uv_offset = height / (1.5 * height);
+    let uv_col = floor(in.tex_coords.x * width / 2.0);
+    let y = textureSample(t_diffuse, s_diffuse, in.tex_coords);
+    let u = textureSample(t_diffuse, s_diffuse, vec2<f32>(uv_col * 2.0 / width, in.tex_coords.y + uv_offset));
+    let v = textureSample(t_diffuse, s_diffuse, vec2<f32>((uv_col*2.0+1.0) / width, in.tex_coords.y + uv_offset));
+    let r = 1.164 * (y.r - 0.0625) + 1.596 * (u.r - 0.5);
+    let g = 1.164 * (y.r - 0.0625) - 0.183 * (u.r - 0.5) - 0.391 * (v.r - 0.5);
+    let b = 1.164 * (y.r - 0.0625) + 1.596 * (v.r - 0.5);
+    return vec4(r, g, b, 1.0);
+}
+
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-    let width = 2494.0;
-    let height = 2494.0;
-    let tex_coords = in.tex_coords;
+    return decode_nv12(in);
+    // let width = 3840.0;
+    // let height = 2160.0;
 
+    // let width = 256.0;
+    // let height = 256.0;
+    // 256x256
 
-    // // Calculate pixel position
-    // let x = floor(tex_coords.x * width);
-    // let y = floor(tex_coords.y * height);
-  
-    // // Calculate offset to represent how many components have been shifted
-    // let offset = (x + y * width) % 4.0;
-  
-    // // Shift the pixel color components based on the offset
-    // var color = textureSample(t_diffuse, s_diffuse, tex_coords);
-  
-    // if (offset == 1.0) {
-    //     color = vec4<f32>(color.a, color.r, color.g, color.b);
-    // } else if (offset == 2.0) {
-    //     color = vec4<f32>(color.b, color.a, color.r, color.g);
-    // } else if (offset == 3.0) {
-    //     color = vec4<f32>(color.g, color.b, color.a, color.r);
-    // }
-    // return color;
+    // let width = 1920.0;
+    // let height = 1080.0;
 
-    return vec4(tex_coords.x, tex_coords.y, 0.0, 1.0);
+    // let img_col = floor(in.tex_coords.x * width);
+    // let img_row = floor(in.tex_coords.y * height);
+
+    // let flat_index_r = img_row * (width * 3.0) + img_col * 3.0;
+    // let flat_index_g = flat_index_r + 1.0;
+    // let flat_index_b = flat_index_r + 2.0;
+
+    // let tex_coords_r = vec2(flat_index_r % (width * 3.0) / (width * 3.0), in.tex_coords.y);
+    // let tex_coords_g = vec2(flat_index_g % (width * 3.0) / (width * 3.0), in.tex_coords.y);
+    // let tex_coords_b = vec2(flat_index_b % (width * 3.0) / (width * 3.0), in.tex_coords.y);
+
+    // // let tex_coords_r = vec2(in.tex_coords.x * 3.0, in.tex_coords.y);
+    // // let tex_coords_g = vec2(in.tex_coords.x * 3.0 + 1.0 / (width * 3.0), in.tex_coords.y);
+    // // let tex_coords_b = vec2(in.tex_coords.x * 3.0 + 2.0 / (width * 3.0), in.tex_coords.y);
+    
+    // // let tex_coords_r = vec2(in.tex_coords.x, in.tex_coords.y);
+    // // let tex_coords_g = vec2(in.tex_coords.x + 1.0 / (width*3.0), in.tex_coords.y);
+    // // let tex_coords_b = vec2(in.tex_coords.x + 2.0 / (width*3.0), in.tex_coords.y);
+
+    // // let tex_coords_r = in.tex_coords;
+    // // let tex_coords_g = in.tex_coords;
+    // // let tex_coords_b = in.tex_coords;
+    // let r = textureSample(t_diffuse, s_diffuse, tex_coords_r);
+    // let g = textureSample(t_diffuse, s_diffuse, tex_coords_g);
+    // let b = textureSample(t_diffuse, s_diffuse, tex_coords_b);
+    // return vec4(r.r, g.r, b.r, 1.0);
 }
 
 /*
-(0,0) -> r,g,b,1 | (aa) tc.rgb, 1
-(1,0) -> aa, r, g, 1 | (bb, ba)  prev_tc_x = tc.x - 1 / w, prev_tc_y = 0
-(2, 0) -> bb, ba, r, 1 | (cg, cb, ca)
-(3, 0) -> cg, cb, ca, 1 | (dr, dg, db, da)
-(4, 0) -> dr, dg, db, 1 | (da, er, eg, eb, ea)
-(0, 1) -> da, er, eg, 1 | (eb, ea, fa, fb, fg, fa)
-(1, 1) -> eb, ea, fa, 1 | (fb, fg, fa, ga, gb, gc)
-(2, 1) -> fb, fg, fa, 1 | (ga, gb, gc, gd, ge, gf)
-(3, 1) -> ga, gb, gc, 1 | (gd, ge, gf, gg, gh, gi)
-(4, 1) -> gd, ge, gf, 1 | (gg, gh, gi, gj, gk, gl)
+RGB img
+| 0 | 1 | 2 | 3 |
+| 4 | 5 | 6 | 7 |
+| 8 | 9 | 10| 11|
+| 12| 13| 14| 15|
+
+4x4 RGB in R8 texture
+| r0 | g0 | b0 | r1 | g1 | b1 | r2 | g2 | b2 | r3 | g3 | b3 |
+| r4 | g4 | b4 | r5 | g5 | b5 | r6 | g6 | b6 | r7 | g7 | b7 |
+| r8 | g8 | b8 | r9 | g9 | b9 | r10| g10| b10| r11| g11| b11|
+| r12| g12| b12| r13| g13| b13| r14| g14| b14| r15| g15| b15|
+
+p0 -> frag (0, 0) -> tex(0,0), tex(1/12, 0), tex(2/12, 0)
+p1 -> frag (0.25, 0) -> tex(3/12, 0), tex(4/12, 0), tex(5/12, 0)
+p2 -> frag (0.5, 0) -> tex(6/12, 0), tex(7/12, 0), tex(8/12, 0)
+p3 -> frag (0.75, 0) -> tex(9/12, 0), tex(10/12, 0), tex(11/12, 0)
+p4 -> frag (0, 0.25) -> tex(0, 1/4), tex(1/12, 1/4), tex(2/12, 1/4)
+
+This isn't the case tho, this will fail for 4k because texture width will be too big....
 */
