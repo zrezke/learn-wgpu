@@ -50,12 +50,13 @@ var s_diffuse: sampler;
 fn decode_nv12(in: VertexOutput) -> vec4<f32> {
     let width = 1920.0;
     let height = 1080.0;
-    let uv_offset = height / (1.5 * height);
-    let uv_row = floor(in.tex_coords.y * floor(height * 1.5) / 2.0);
-    let uv_col = floor(in.tex_coords.x * width / 2.0) * 2.0; // 2.0 because we need two pixels for one UV pair
-    let y = textureSample(t_diffuse, s_diffuse, in.tex_coords);
-    let u = textureSample(t_diffuse, s_diffuse, vec2<f32>(uv_col / width, uv_offset + uv_row / (height * 1.5)));
-    let v = textureSample(t_diffuse, s_diffuse, vec2<f32>((uv_col + 1.0) / width, uv_offset + uv_row / (height * 1.5)));
+    let uv_offset: u32 = u32(height);
+    let uv_row: u32 = u32(floor(in.tex_coords.y * height * 1.5) / 2.0);
+    let uv_col: u32 = u32(floor(in.tex_coords.x * width / 2.0) * 2.0); // 2.0 because we need two pixels for one UV pair
+    let tex_coords = vec2<u32>(in.tex_coords * vec2<f32>(width, height * 1.5));
+    let y = textureLoad(t_diffuse, tex_coords, 0);
+    let u = textureLoad(t_diffuse, vec2<u32>(uv_col, uv_offset + uv_row), 0);
+    let v = textureLoad(t_diffuse, vec2<u32>((uv_col + 1u), uv_offset + uv_row), 0);
     let r = y.r + 1.13983 * (v.r - 0.5);
     let g = y.r - 0.39465 * (u.r - 0.5) - 0.58060 * (v.r - 0.5);
     let b = y.r + 2.03211 * (u.r - 0.5);
