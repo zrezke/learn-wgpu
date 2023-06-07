@@ -41,23 +41,27 @@ impl Vertex {
     }
 }
 
+const ASPECT_RATIO: f32 = 1920.0 / 1080.0;
+
+const TWO_THIRDS: f32 = 2.0 / 3.0;
+
 // 2D Rectangle
 const VERTICES: &[Vertex] = &[
     Vertex {
-        position: [0.0, 0.0, 0.0],
-        tex_coords: [0.0, 0.0],
+        position: [-1.0, -1.0, 0.0],
+        tex_coords: [0.0, TWO_THIRDS],
     },
     Vertex {
-        position: [1.0, 0.0, 0.0],
-        tex_coords: [1.0, 0.0],
+        position: [1.0, -1.0, 0.0],
+        tex_coords: [1.0, TWO_THIRDS],
     },
     Vertex {
         position: [1.0, 1.0, 0.0],
-        tex_coords: [1.0, 1.0],
+        tex_coords: [1.0, 0.0],
     },
     Vertex {
-        position: [0.0, 1.0, 0.0],
-        tex_coords: [0.0, 1.0],
+        position: [-1.0, 1.0, 0.0],
+        tex_coords: [0.0, 0.0],
     },
 ];
 
@@ -66,31 +70,16 @@ const INDICES: &[u16] = &[
     2, 3, 0, // second triangle
 ];
 
-
-// const VERTICES: &[Vertex] = &[
-//     Vertex {
-//         position: [-0.0868241, 0.49240386, 0.0],
-//         tex_coords: [0.4131759, 0.00759614],
-//     }, // A
-//     Vertex {
-//         position: [-0.49513406, 0.06958647, 0.0],
-//         tex_coords: [0.0048659444, 0.43041354],
-//     }, // B
-//     Vertex {
-//         position: [-0.21918549, -0.44939706, 0.0],
-//         tex_coords: [0.28081453, 0.949397],
-//     }, // C
-//     Vertex {
-//         position: [0.35966998, -0.3473291, 0.0],
-//         tex_coords: [0.85967, 0.84732914],
-//     }, // D
-//     Vertex {
-//         position: [0.44147372, 0.2347359, 0.0],
-//         tex_coords: [0.9414737, 0.2652641],
-//     }, // E
-// ];
-
-// const INDICES: &[u16] = &[0, 1, 4, 1, 2, 4, 2, 3, 4, /* padding */ 0];
+fn maintain_aspect_ratio(size: winit::dpi::PhysicalSize<u32>, aspect_ratio: f32) -> winit::dpi::PhysicalSize<u32> {
+    let width = size.width;
+    let height = size.height;
+    let current_aspect_ratio = width as f32 / height as f32;
+    if current_aspect_ratio > aspect_ratio {
+        winit::dpi::PhysicalSize::new((height as f32 * aspect_ratio) as u32, height)
+    } else {
+        winit::dpi::PhysicalSize::new(width, (width as f32 / aspect_ratio) as u32)
+    }
+}
 
 
 struct State {
@@ -417,8 +406,10 @@ pub async fn run() {
                             ..
                         } => *control_flow = ControlFlow::Exit,
                         WindowEvent::Resized(physical_size) => {
-                            state.resize(*physical_size);
+                            let new_size = maintain_aspect_ratio(*physical_size, ASPECT_RATIO);
+                            state.resize(new_size);
                         }
+                        
                         WindowEvent::ScaleFactorChanged { new_inner_size, .. } => {
                             // new_inner_size is &mut so w have to dereference it twice
                             state.resize(**new_inner_size);

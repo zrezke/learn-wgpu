@@ -33,19 +33,48 @@ var s_diffuse: sampler;
 //     // return textureSample(t_diffuse, s_diffuse, in.tex_coords);
 // }
 
+// fn decode_nv12(in: VertexOutput) -> vec4<f32> {
+//     let width = 1920.0;
+//     let height = 1080.0;
+//     let uv_offset = height / (1.5 * height);
+//     let uv_col = floor(in.tex_coords.x * width / 2.0);
+//     let y = textureSample(t_diffuse, s_diffuse, in.tex_coords);
+//     let u = textureSample(t_diffuse, s_diffuse, vec2<f32>(uv_col*2.0 / width, in.tex_coords.y + uv_offset));
+//     let v = textureSample(t_diffuse, s_diffuse, vec2<f32>((uv_col*2.0+1.0) / width, in.tex_coords.y + uv_offset));
+//     let r = 1.164 * (y.r - 0.0625) + 1.596 * (u.r - 0.5);
+//     let g = 1.164 * (y.r - 0.0625) - 0.183 * (u.r - 0.5) - 0.391 * (v.r - 0.5);
+//     let b = 1.164 * (y.r - 0.0625) + 1.596 * (v.r - 0.5);
+//     return vec4(r, g, b, 1.0);
+// }
+
 fn decode_nv12(in: VertexOutput) -> vec4<f32> {
     let width = 1920.0;
     let height = 1080.0;
     let uv_offset = height / (1.5 * height);
-    let uv_col = floor(in.tex_coords.x * width / 2.0);
+    let uv_row = floor(in.tex_coords.y * floor(height * 1.5) / 2.0);
+    let uv_col = floor(in.tex_coords.x * width / 2.0) * 2.0; // 2.0 because we need two pixels for one UV pair
     let y = textureSample(t_diffuse, s_diffuse, in.tex_coords);
-    let u = textureSample(t_diffuse, s_diffuse, vec2<f32>(uv_col * 2.0 / width, in.tex_coords.y + uv_offset));
-    let v = textureSample(t_diffuse, s_diffuse, vec2<f32>((uv_col*2.0+1.0) / width, in.tex_coords.y + uv_offset));
-    let r = 1.164 * (y.r - 0.0625) + 1.596 * (u.r - 0.5);
-    let g = 1.164 * (y.r - 0.0625) - 0.183 * (u.r - 0.5) - 0.391 * (v.r - 0.5);
-    let b = 1.164 * (y.r - 0.0625) + 1.596 * (v.r - 0.5);
+    let u = textureSample(t_diffuse, s_diffuse, vec2<f32>(uv_col / width, uv_offset + uv_row / (height * 1.5)));
+    let v = textureSample(t_diffuse, s_diffuse, vec2<f32>((uv_col + 1.0) / width, uv_offset + uv_row / (height * 1.5)));
+    let r = y.r + 1.13983 * (v.r - 0.5);
+    let g = y.r - 0.39465 * (u.r - 0.5) - 0.58060 * (v.r - 0.5);
+    let b = y.r + 2.03211 * (u.r - 0.5);
     return vec4(r, g, b, 1.0);
 }
+
+/*
+RGB img
+| 0 | 1 | 2 | 3 |
+| 4 | 5 | 6 | 7 |
+| 8 | 9 | 10| 11|
+| 12| 13| 14| 15|
+| u0| v0| u1| v1|
+| u2| v2| u3| v3|
+
+p0 -> tex(0, 0) -> u = tex(0, p0.y + 4 / 6)
+p4 -> tex(0, 1/6) -> u = tex(0, p4.y )
+*/
+
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
