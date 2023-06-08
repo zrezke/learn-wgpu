@@ -1,7 +1,6 @@
 // Vertex shader
 
 struct VertexInput {
-    @location(0) position: vec3<f32>,
     @location(1) tex_coords: vec2<f32>,
 }
 
@@ -12,18 +11,28 @@ struct VertexOutput {
 
 @vertex
 fn vs_main(
-    model: VertexInput,
+    @builtin(vertex_index) v_idx: u32,
 ) -> VertexOutput {
+    let texcoord = vec2<f32>(f32(v_idx / 2u), f32(v_idx % 2u));
     var out: VertexOutput;
-    out.tex_coords = model.tex_coords;
-    out.clip_position = vec4<f32>(model.position, 1.0);
+    var position: vec2<f32>;
+    if (v_idx == 0u) {
+        position = vec2<f32>(-1.0, 1.0);
+    } else if (v_idx == 1u) {
+        position = vec2<f32>(-1.0, -1.0);
+    } else if (v_idx == 2u) {
+        position = vec2<f32>(1.0, 1.0);
+    } else {
+        position = vec2<f32>(1.0, -1.0);
+    }
+    out.tex_coords = texcoord * vec2<f32>(1.0, 2.0 / 3.0); // vertex * extent_u, extent_v
+    out.clip_position = vec4<f32>(position, 0.0, 1.0);
     return out;
 }
 
 // Fragment shader
-
 @group(0) @binding(0)
-var t_diffuse: texture_2d<u32>;
+var t_diffuse: texture_2d<f32>;
 @group(0)@binding(1)
 var s_diffuse: sampler;
 
@@ -68,24 +77,41 @@ fn decode_nv12(in: VertexOutput) -> vec4<f32> {
 }
 
 
-fn _decode_nv12(texture: texture_2d<f32>, in_tex_coords: vec2<f32>) -> vec4 {
+fn _decode_nv12(texture: texture_2d<f32>, in_tex_coords: vec2<f32>) -> vec4<f32> {
     let texture_dim = vec2<f32>(textureDimensions(texture).xy);
     let uv_offset = u32(texture_dim.y / 1.5);
     let uv_row = u32(floor(in_tex_coords.y * texture_dim.y) / 2.0);
     let uv_col = u32(floor(in_tex_coords.x * texture_dim.x / 2.0) * 2.0); // 2.0 because we need two pixels for one UV pair
     let tex_coords = vec2<f32>(in_tex_coords * vec2<f32>(texture_dim.x, texture_dim.y));
-    let y = textureLoad(texture, tex_coords, 0).r;
-    let u = textureLoad(texture, vec2<f32>(uv_col, uv_offset + uv_row), 0).r;
-    let v = textureLoad(texture, vec2<f32>((uv_col + 1u), uv_offset + uv_row), 0).r;
-    // let r = y.r + 1.13983 * (v.r - 0.5);
-    // let g = y.r - 0.39465 * (u.r - 0.5) - 0.58060 * (v.r - 0.5);
-    // let b = y.r + 2.03211 * (u.r - 0.5);
-    let r = 1.164 * (y - 0.0625) + 1.596 * (v - 0.5);
-    let g = 1.164 * (y - 0.0625) - 0.183 * (v - 0.5) - 0.391 * (u - 0.5);
-    let b = 1.164 * (y - 0.0625) + 1.596 * (u - 0.5);
+    let coords = vec2<u32>(u32(tex_coords.x), u32(tex_coords.y));
+    let y = textureLoad(texture, coords, 0).r;
+    let u = textureLoad(texture, vec2<u32>(uv_col, uv_offset + uv_row), 0).r;
+    let v = textureLoad(texture, vec2<u32>((uv_col + 1u), uv_offset + uv_row), 0).r;
+    // let r = y + 1.13983 * (v - 0.5);
+    // let g = y - 0.39465 * (u - 0.5) - 0.58060 * (v - 0.5);
+    // let b = y + 2.03211 * (u - 0.5);
+    // let r = 1.164383 * (y - 0.0625) + 1.596027 * (v - 0.5);
+    // let g = 1.164383 * (y - 0.0625) - (0.391762 * (u - 0.5)) - (0.812968 * (v - 0.5));
+    // let b = 1.164383 * (y - 0.0625) + 2.017232 * (u - 0.5);
+    // let r = y + 1.370705 * (v - 0.5);
+    // let g = y - 0.698001 * (u - 0.5) - 0.337633 * (v - 0.5);
+    // let b = y + 1.732446 * (u - 0.5);
+
+    let r = y + 1.402 * (v - 0.5);
+    let g = y - 0.344136 * (u - 0.5) - 0.714136 * (v - 0.5);
+    let b = y + 1.772 * (u - 0.5);
+
     return vec4(r, g, b, 1.0);
+    // return vec4(0.0, 0.0, 1.0, 1.0);
 }
 
+/*
+// y = 0.299f * r[i] + 0.587f * g[i] + 0.114f * b[i];
+// u1 = (int)(((float)b[i] - y) * 0.564f) + 128;
+// v1 = (int)(((float)r[i] - y) * 0.713f) + 128;
+// [0.299, 
+]
+*/
 /*
 NV12 img
 | 0 | 1 | 2 | 3 |

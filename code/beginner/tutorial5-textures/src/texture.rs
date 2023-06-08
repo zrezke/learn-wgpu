@@ -104,8 +104,8 @@ impl Texture {
         let dimensions = get_rgb_dimensions(img.dimensions());
         println!("Dimensions: {:?}", dimensions);
         let size = wgpu::Extent3d {
-            width: img.width() * 3,
-            height: img.height(),
+            width: img.width(),
+            height: (img.height() as f32 * 1.5) as u32,
             depth_or_array_layers: 1,
         };
 
@@ -131,8 +131,8 @@ impl Texture {
             &rgba,
             wgpu::ImageDataLayout {
                 offset: 0,
-                bytes_per_row: NonZeroU32::new(img.width() * 3),
-                rows_per_image: NonZeroU32::new(img.height()),
+                bytes_per_row: NonZeroU32::new(img.width()),
+                rows_per_image: NonZeroU32::new((img.height() as f32 * 1.5) as u32),
             },
             size,
         );

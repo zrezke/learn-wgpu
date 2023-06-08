@@ -15,7 +15,7 @@ mod texture;
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
 struct Vertex {
-    position: [f32; 3],
+    // position: [f32; 3],
     tex_coords: [f32; 2],
 }
 
@@ -46,29 +46,29 @@ const ASPECT_RATIO: f32 = 1920.0 / 1080.0;
 const TWO_THIRDS: f32 = 2.0 / 3.0;
 
 // 2D Rectangle
-const VERTICES: &[Vertex] = &[
-    Vertex {
-        position: [-1.0, -1.0, 0.0],
-        tex_coords: [0.0, TWO_THIRDS],
-    },
-    Vertex {
-        position: [1.0, -1.0, 0.0],
-        tex_coords: [1.0, TWO_THIRDS],
-    },
-    Vertex {
-        position: [1.0, 1.0, 0.0],
-        tex_coords: [1.0, 0.0],
-    },
-    Vertex {
-        position: [-1.0, 1.0, 0.0],
-        tex_coords: [0.0, 0.0],
-    },
-];
+// const VERTICES: &[Vertex] = &[
+//     Vertex {
+//         position: [-1.0, -1.0, 0.0],
+//         tex_coords: [0.0, TWO_THIRDS],
+//     },
+//     Vertex {
+//         position: [1.0, -1.0, 0.0],
+//         tex_coords: [1.0, TWO_THIRDS],
+//     },
+//     Vertex {
+//         position: [1.0, 1.0, 0.0],
+//         tex_coords: [1.0, 0.0],
+//     },
+//     Vertex {
+//         position: [-1.0, 1.0, 0.0],
+//         tex_coords: [0.0, 0.0],
+//     },
+// ];
 
-const INDICES: &[u16] = &[
-    0, 1, 2, // first triangle
-    2, 3, 0, // second triangle
-];
+// const INDICES: &[u16] = &[
+//     0, 1, 2, // first triangle
+//     2, 3, 0, // second triangle
+// ];
 
 fn maintain_aspect_ratio(size: winit::dpi::PhysicalSize<u32>, aspect_ratio: f32) -> winit::dpi::PhysicalSize<u32> {
     let width = size.width;
@@ -89,9 +89,9 @@ struct State {
     config: wgpu::SurfaceConfiguration,
     size: winit::dpi::PhysicalSize<u32>,
     render_pipeline: wgpu::RenderPipeline,
-    vertex_buffer: wgpu::Buffer,
-    index_buffer: wgpu::Buffer,
-    num_indices: u32,
+    // vertex_buffer: wgpu::Buffer,
+    // index_buffer: wgpu::Buffer,
+    // num_indices: u32,
     // NEW!
     #[allow(dead_code)]
     diffuse_texture: texture::Texture,
@@ -220,7 +220,8 @@ impl State {
             vertex: wgpu::VertexState {
                 module: &shader,
                 entry_point: "vs_main",
-                buffers: &[Vertex::desc()],
+                // buffers: &[Vertex::desc()],
+                buffers: &[],
             },
             fragment: Some(wgpu::FragmentState {
                 module: &shader,
@@ -235,17 +236,9 @@ impl State {
                 })],
             }),
             primitive: wgpu::PrimitiveState {
-                topology: wgpu::PrimitiveTopology::TriangleList,
-                strip_index_format: None,
-                front_face: wgpu::FrontFace::Ccw,
-                cull_mode: Some(wgpu::Face::Back),
-                // Setting this to anything other than Fill requires Features::POLYGON_MODE_LINE
-                // or Features::POLYGON_MODE_POINT
-                polygon_mode: wgpu::PolygonMode::Fill,
-                // Requires Features::DEPTH_CLIP_CONTROL
-                unclipped_depth: false,
-                // Requires Features::CONSERVATIVE_RASTERIZATION
-                conservative: false,
+                topology: wgpu::PrimitiveTopology::TriangleStrip,
+                cull_mode: None,
+                ..Default::default()
             },
             depth_stencil: None,
             multisample: wgpu::MultisampleState {
@@ -258,17 +251,17 @@ impl State {
             multiview: None,
         });
 
-        let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("Vertex Buffer"),
-            contents: bytemuck::cast_slice(VERTICES),
-            usage: wgpu::BufferUsages::VERTEX,
-        });
-        let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("Index Buffer"),
-            contents: bytemuck::cast_slice(INDICES),
-            usage: wgpu::BufferUsages::INDEX,
-        });
-        let num_indices = INDICES.len() as u32;
+        // let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        //     label: Some("Vertex Buffer"),
+        //     contents: bytemuck::cast_slice(VERTICES),
+        //     usage: wgpu::BufferUsages::VERTEX,
+        // });
+        // let index_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
+        //     label: Some("Index Buffer"),
+        //     contents: bytemuck::cast_slice(INDICES),
+        //     usage: wgpu::BufferUsages::INDEX,
+        // });
+        // let num_indices = INDICES.len() as u32;
 
         Self {
             surface,
@@ -277,9 +270,9 @@ impl State {
             config,
             size,
             render_pipeline,
-            vertex_buffer,
-            index_buffer,
-            num_indices,
+            // vertex_buffer,
+            // index_buffer,
+            // num_indices,
             diffuse_texture,
             diffuse_bind_group,
             window,
@@ -339,9 +332,10 @@ impl State {
 
             render_pass.set_pipeline(&self.render_pipeline);
             render_pass.set_bind_group(0, &self.diffuse_bind_group, &[]);
-            render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
-            render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
-            render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
+            // render_pass.set_vertex_buffer(0, self.vertex_buffer.slice(..));
+            // render_pass.set_index_buffer(self.index_buffer.slice(..), wgpu::IndexFormat::Uint16);
+            // render_pass.draw_indexed(0..self.num_indices, 0, 0..1);
+            render_pass.draw(0..4, 0..1)
         }
 
         self.queue.submit(iter::once(encoder.finish()));
