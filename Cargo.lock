@@ -1038,6 +1038,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "futures-intrusive"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d930c203dd0b6ff06e0201a4a2fe9149b43c684fd4420555b26d21b1a02956f"
+dependencies = [
+ "futures-core",
+ "lock_api",
+ "parking_lot 0.12.1",
+]
+
+[[package]]
 name = "futures-io"
 version = "0.3.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1123,7 +1134,7 @@ dependencies = [
  "cgmath",
  "env_logger",
  "framework",
- "futures-intrusive",
+ "futures-intrusive 0.4.0",
  "gif",
  "image",
  "log",
@@ -3173,6 +3184,7 @@ dependencies = [
  "console_log",
  "env_logger",
  "fs_extra",
+ "futures-intrusive 0.5.0",
  "glob",
  "image",
  "log",
@@ -3840,7 +3852,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 name = "windowless"
 version = "0.1.0"
 dependencies = [
- "futures-intrusive",
+ "futures-intrusive 0.4.0",
  "image",
  "pollster",
  "shaderc",

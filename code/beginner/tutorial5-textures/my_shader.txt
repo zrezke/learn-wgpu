@@ -106,7 +106,7 @@ Module {
                 dim: D2,
                 arrayed: false,
                 class: Sampled {
-                    kind: Float,
+                    kind: Uint,
                     multi: false,
                 },
             },
@@ -166,8 +166,8 @@ Module {
             specialization: None,
             inner: Scalar {
                 width: 4,
-                value: Uint(
-                    1,
+                value: Float(
+                    1.0,
                 ),
             },
         },
@@ -176,8 +176,8 @@ Module {
             specialization: None,
             inner: Scalar {
                 width: 4,
-                value: Float(
-                    1.0,
+                value: Uint(
+                    1,
                 ),
             },
         },
@@ -187,7 +187,7 @@ Module {
             inner: Scalar {
                 width: 4,
                 value: Float(
-                    0.0,
+                    2.0,
                 ),
             },
         },
@@ -197,7 +197,7 @@ Module {
             inner: Scalar {
                 width: 4,
                 value: Float(
-                    1.5,
+                    3.0,
                 ),
             },
         },
@@ -207,11 +207,21 @@ Module {
             inner: Scalar {
                 width: 4,
                 value: Float(
-                    2.0,
+                    0.0,
                 ),
             },
         },
         [9]: Constant {
+            name: None,
+            specialization: None,
+            inner: Scalar {
+                width: 4,
+                value: Float(
+                    1.5,
+                ),
+            },
+        },
+        [10]: Constant {
             name: None,
             specialization: None,
             inner: Scalar {
@@ -221,23 +231,13 @@ Module {
                 ),
             },
         },
-        [10]: Constant {
-            name: None,
-            specialization: None,
-            inner: Scalar {
-                width: 4,
-                value: Float(
-                    1.1640000343322754,
-                ),
-            },
-        },
         [11]: Constant {
             name: None,
             specialization: None,
             inner: Scalar {
                 width: 4,
-                value: Float(
-                    0.0625,
+                value: Sint(
+                    16,
                 ),
             },
         },
@@ -246,8 +246,8 @@ Module {
             specialization: None,
             inner: Scalar {
                 width: 4,
-                value: Float(
-                    1.5959999561309814,
+                value: Sint(
+                    28,
                 ),
             },
         },
@@ -256,8 +256,8 @@ Module {
             specialization: None,
             inner: Scalar {
                 width: 4,
-                value: Float(
-                    0.5,
+                value: Sint(
+                    128,
                 ),
             },
         },
@@ -267,7 +267,7 @@ Module {
             inner: Scalar {
                 width: 4,
                 value: Float(
-                    0.18299999833106995,
+                    0.29899999499320984,
                 ),
             },
         },
@@ -277,7 +277,47 @@ Module {
             inner: Scalar {
                 width: 4,
                 value: Float(
-                    0.39100000262260437,
+                    0.5870000123977661,
+                ),
+            },
+        },
+        [16]: Constant {
+            name: None,
+            specialization: None,
+            inner: Scalar {
+                width: 4,
+                value: Float(
+                    0.11400000005960464,
+                ),
+            },
+        },
+        [17]: Constant {
+            name: None,
+            specialization: None,
+            inner: Scalar {
+                width: 4,
+                value: Float(
+                    1.7719999551773071,
+                ),
+            },
+        },
+        [18]: Constant {
+            name: None,
+            specialization: None,
+            inner: Scalar {
+                width: 4,
+                value: Float(
+                    1.4019999504089355,
+                ),
+            },
+        },
+        [19]: Constant {
+            name: None,
+            specialization: None,
+            inner: Scalar {
+                width: 4,
+                value: Float(
+                    255.0,
                 ),
             },
         },
@@ -375,7 +415,7 @@ Module {
                     index: 1,
                 },
                 [7]: Constant(
-                    [7],
+                    [9],
                 ),
                 [8]: Binary {
                     op: Divide,
@@ -410,7 +450,7 @@ Module {
                     arg3: None,
                 },
                 [14]: Constant(
-                    [8],
+                    [6],
                 ),
                 [15]: Binary {
                     op: Divide,
@@ -438,7 +478,7 @@ Module {
                     right: [18],
                 },
                 [20]: Constant(
-                    [8],
+                    [6],
                 ),
                 [21]: Binary {
                     op: Divide,
@@ -453,7 +493,7 @@ Module {
                     arg3: None,
                 },
                 [23]: Constant(
-                    [8],
+                    [6],
                 ),
                 [24]: Binary {
                     op: Multiply,
@@ -524,7 +564,7 @@ Module {
                     ],
                 },
                 [36]: Constant(
-                    [9],
+                    [10],
                 ),
                 [37]: ImageLoad {
                     image: [1],
@@ -539,212 +579,266 @@ Module {
                     base: [37],
                     index: 0,
                 },
-                [39]: Binary {
+                [39]: As {
+                    expr: [38],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
+                },
+                [40]: Constant(
+                    [11],
+                ),
+                [41]: As {
+                    expr: [40],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
+                },
+                [42]: Binary {
+                    op: Subtract,
+                    left: [39],
+                    right: [41],
+                },
+                [43]: Binary {
                     op: Add,
                     left: [9],
                     right: [16],
                 },
-                [40]: Compose {
+                [44]: Compose {
                     ty: [9],
                     components: [
                         [25],
-                        [39],
+                        [43],
                     ],
                 },
-                [41]: Constant(
-                    [9],
+                [45]: Constant(
+                    [10],
                 ),
-                [42]: ImageLoad {
+                [46]: ImageLoad {
                     image: [1],
-                    coordinate: [40],
+                    coordinate: [44],
                     array_index: None,
                     sample: None,
                     level: Some(
-                        [41],
+                        [45],
                     ),
                 },
-                [43]: AccessIndex {
-                    base: [42],
+                [47]: AccessIndex {
+                    base: [46],
                     index: 0,
                 },
-                [44]: Constant(
-                    [4],
+                [48]: As {
+                    expr: [47],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
+                },
+                [49]: Constant(
+                    [12],
                 ),
-                [45]: Binary {
+                [50]: As {
+                    expr: [49],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
+                },
+                [51]: Binary {
+                    op: Subtract,
+                    left: [48],
+                    right: [50],
+                },
+                [52]: Constant(
+                    [5],
+                ),
+                [53]: Binary {
                     op: Add,
                     left: [25],
-                    right: [44],
+                    right: [52],
                 },
-                [46]: Binary {
+                [54]: Binary {
                     op: Add,
                     left: [9],
                     right: [16],
                 },
-                [47]: Compose {
+                [55]: Compose {
                     ty: [9],
                     components: [
-                        [45],
-                        [46],
+                        [53],
+                        [54],
                     ],
                 },
-                [48]: Constant(
-                    [9],
+                [56]: Constant(
+                    [10],
                 ),
-                [49]: ImageLoad {
+                [57]: ImageLoad {
                     image: [1],
-                    coordinate: [47],
+                    coordinate: [55],
                     array_index: None,
                     sample: None,
                     level: Some(
-                        [48],
+                        [56],
                     ),
                 },
-                [50]: AccessIndex {
-                    base: [49],
+                [58]: AccessIndex {
+                    base: [57],
                     index: 0,
                 },
-                [51]: Constant(
-                    [10],
-                ),
-                [52]: Constant(
-                    [11],
-                ),
-                [53]: Binary {
-                    op: Subtract,
-                    left: [38],
-                    right: [52],
-                },
-                [54]: Binary {
-                    op: Multiply,
-                    left: [51],
-                    right: [53],
-                },
-                [55]: Constant(
-                    [12],
-                ),
-                [56]: Constant(
-                    [13],
-                ),
-                [57]: Binary {
-                    op: Subtract,
-                    left: [50],
-                    right: [56],
-                },
-                [58]: Binary {
-                    op: Multiply,
-                    left: [55],
-                    right: [57],
-                },
-                [59]: Binary {
-                    op: Add,
-                    left: [54],
-                    right: [58],
+                [59]: As {
+                    expr: [58],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
                 },
                 [60]: Constant(
-                    [10],
-                ),
-                [61]: Constant(
-                    [11],
-                ),
-                [62]: Binary {
-                    op: Subtract,
-                    left: [38],
-                    right: [61],
-                },
-                [63]: Binary {
-                    op: Multiply,
-                    left: [60],
-                    right: [62],
-                },
-                [64]: Constant(
-                    [14],
-                ),
-                [65]: Constant(
                     [13],
                 ),
-                [66]: Binary {
+                [61]: As {
+                    expr: [60],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
+                },
+                [62]: Binary {
                     op: Subtract,
-                    left: [50],
-                    right: [65],
+                    left: [59],
+                    right: [61],
                 },
-                [67]: Binary {
-                    op: Multiply,
-                    left: [64],
-                    right: [66],
-                },
+                [63]: Constant(
+                    [14],
+                ),
+                [64]: Constant(
+                    [15],
+                ),
+                [65]: Constant(
+                    [16],
+                ),
+                [66]: Constant(
+                    [17],
+                ),
+                [67]: Constant(
+                    [18],
+                ),
                 [68]: Binary {
-                    op: Subtract,
+                    op: Multiply,
+                    left: [67],
+                    right: [62],
+                },
+                [69]: Binary {
+                    op: Add,
+                    left: [42],
+                    right: [68],
+                },
+                [70]: Binary {
+                    op: Multiply,
                     left: [63],
                     right: [67],
                 },
-                [69]: Constant(
-                    [15],
-                ),
-                [70]: Constant(
-                    [13],
-                ),
                 [71]: Binary {
-                    op: Subtract,
-                    left: [43],
-                    right: [70],
+                    op: Divide,
+                    left: [70],
+                    right: [64],
                 },
                 [72]: Binary {
                     op: Multiply,
-                    left: [69],
-                    right: [71],
+                    left: [71],
+                    right: [51],
                 },
                 [73]: Binary {
                     op: Subtract,
-                    left: [68],
+                    left: [42],
                     right: [72],
                 },
-                [74]: Constant(
-                    [10],
-                ),
-                [75]: Constant(
-                    [11],
-                ),
+                [74]: Binary {
+                    op: Multiply,
+                    left: [65],
+                    right: [66],
+                },
+                [75]: Binary {
+                    op: Divide,
+                    left: [74],
+                    right: [64],
+                },
                 [76]: Binary {
-                    op: Subtract,
-                    left: [38],
-                    right: [75],
+                    op: Multiply,
+                    left: [75],
+                    right: [62],
                 },
                 [77]: Binary {
-                    op: Multiply,
-                    left: [74],
+                    op: Subtract,
+                    left: [73],
                     right: [76],
                 },
-                [78]: Constant(
-                    [12],
-                ),
-                [79]: Constant(
-                    [13],
-                ),
-                [80]: Binary {
-                    op: Subtract,
-                    left: [43],
-                    right: [79],
-                },
-                [81]: Binary {
+                [78]: Binary {
                     op: Multiply,
-                    left: [78],
-                    right: [80],
+                    left: [66],
+                    right: [51],
                 },
-                [82]: Binary {
+                [79]: Binary {
                     op: Add,
-                    left: [77],
+                    left: [42],
+                    right: [78],
+                },
+                [80]: As {
+                    expr: [69],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
+                },
+                [81]: Constant(
+                    [19],
+                ),
+                [82]: Binary {
+                    op: Divide,
+                    left: [80],
                     right: [81],
                 },
-                [83]: Constant(
-                    [5],
+                [83]: As {
+                    expr: [77],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
+                },
+                [84]: Constant(
+                    [19],
                 ),
-                [84]: Compose {
+                [85]: Binary {
+                    op: Divide,
+                    left: [83],
+                    right: [84],
+                },
+                [86]: As {
+                    expr: [79],
+                    kind: Float,
+                    convert: Some(
+                        4,
+                    ),
+                },
+                [87]: Constant(
+                    [19],
+                ),
+                [88]: Binary {
+                    op: Divide,
+                    left: [86],
+                    right: [87],
+                },
+                [89]: Constant(
+                    [4],
+                ),
+                [90]: Compose {
                     ty: [3],
                     components: [
-                        [59],
-                        [73],
                         [82],
-                        [83],
+                        [85],
+                        [88],
+                        [89],
                     ],
                 },
             },
@@ -757,12 +851,17 @@ Module {
                 [25]: "uv_col",
                 [30]: "tex_coords",
                 [35]: "coords",
-                [38]: "y",
-                [43]: "u",
-                [50]: "v",
-                [59]: "r",
-                [73]: "g",
-                [82]: "b",
+                [42]: "y",
+                [51]: "u",
+                [62]: "v",
+                [63]: "a",
+                [64]: "b",
+                [65]: "c",
+                [66]: "d",
+                [67]: "e",
+                [69]: "red",
+                [77]: "green",
+                [79]: "blue",
             },
             body: Block {
                 body: [
@@ -797,146 +896,167 @@ Module {
                         [31..35],
                     ),
                     Emit(
-                        [37..38],
+                        [37..39],
                     ),
                     Emit(
-                        [39..40],
+                        [41..42],
                     ),
                     Emit(
-                        [42..43],
+                        [43..44],
                     ),
                     Emit(
-                        [45..47],
+                        [46..48],
                     ),
                     Emit(
-                        [49..50],
+                        [50..51],
                     ),
                     Emit(
-                        [53..54],
+                        [53..55],
                     ),
                     Emit(
                         [57..59],
                     ),
                     Emit(
-                        [62..63],
+                        [61..62],
                     ),
                     Emit(
-                        [66..68],
+                        [68..69],
                     ),
                     Emit(
-                        [71..73],
+                        [70..77],
                     ),
                     Emit(
-                        [76..77],
+                        [78..79],
                     ),
                     Emit(
-                        [80..82],
+                        [80..80],
                     ),
                     Emit(
-                        [84..84],
+                        [82..83],
+                    ),
+                    Emit(
+                        [85..86],
+                    ),
+                    Emit(
+                        [88..88],
+                    ),
+                    Emit(
+                        [90..90],
                     ),
                     Return {
                         value: Some(
-                            [84],
+                            [90],
                         ),
                     },
                 ],
                 span_info: [
                     Span {
-                        start: 3090,
-                        end: 3130,
+                        start: 3122,
+                        end: 3162,
                     },
                     Span {
-                        start: 3156,
-                        end: 3169,
+                        start: 3188,
+                        end: 3201,
                     },
                     Span {
-                        start: 3152,
-                        end: 3176,
+                        start: 3184,
+                        end: 3208,
                     },
                     Span {
-                        start: 3199,
-                        end: 3236,
+                        start: 3231,
+                        end: 3268,
                     },
                     Span {
-                        start: 3195,
-                        end: 3244,
+                        start: 3227,
+                        end: 3276,
                     },
                     Span {
-                        start: 3273,
-                        end: 3304,
+                        start: 3305,
+                        end: 3336,
                     },
                     Span {
-                        start: 3267,
-                        end: 3310,
+                        start: 3299,
+                        end: 3342,
                     },
                     Span {
-                        start: 3263,
-                        end: 3318,
+                        start: 3295,
+                        end: 3350,
                     },
                     Span {
-                        start: 3391,
-                        end: 3457,
+                        start: 3423,
+                        end: 3489,
                     },
                     Span {
-                        start: 3476,
-                        end: 3523,
+                        start: 3508,
+                        end: 3555,
                     },
                     Span {
-                        start: 3537,
-                        end: 3570,
+                        start: 3569,
+                        end: 3607,
                     },
                     Span {
-                        start: 3605,
-                        end: 3642,
+                        start: 3569,
+                        end: 3617,
                     },
                     Span {
-                        start: 3584,
-                        end: 3648,
+                        start: 3656,
+                        end: 3693,
                     },
                     Span {
-                        start: 3683,
-                        end: 3727,
+                        start: 3631,
+                        end: 3700,
                     },
                     Span {
-                        start: 3662,
-                        end: 3733,
+                        start: 3631,
+                        end: 3710,
                     },
                     Span {
-                        start: 3903,
-                        end: 3923,
+                        start: 3749,
+                        end: 3793,
                     },
                     Span {
-                        start: 3903,
-                        end: 3943,
+                        start: 3724,
+                        end: 3800,
                     },
                     Span {
-                        start: 3957,
-                        end: 3977,
+                        start: 3724,
+                        end: 3811,
                     },
                     Span {
-                        start: 3957,
-                        end: 3997,
+                        start: 4403,
+                        end: 4414,
                     },
                     Span {
-                        start: 3957,
-                        end: 4017,
+                        start: 4432,
+                        end: 4473,
                     },
                     Span {
-                        start: 4031,
-                        end: 4051,
+                        start: 4490,
+                        end: 4501,
                     },
                     Span {
-                        start: 4031,
-                        end: 4071,
+                        start: 4520,
+                        end: 4528,
                     },
                     Span {
-                        start: 4084,
-                        end: 4102,
+                        start: 4520,
+                        end: 4548,
                     },
                     Span {
-                        start: 4077,
-                        end: 4103,
+                        start: 4538,
+                        end: 4567,
+                    },
+                    Span {
+                        start: 4558,
+                        end: 4575,
+                    },
+                    Span {
+                        start: 4515,
+                        end: 4581,
+                    },
+                    Span {
+                        start: 4508,
+                        end: 4582,
                     },
                 ],
             },
@@ -1002,16 +1122,16 @@ Module {
                 ],
                 span_info: [
                     Span {
-                        start: 2965,
-                        end: 2978,
+                        start: 2998,
+                        end: 3011,
                     },
                     Span {
-                        start: 2941,
-                        end: 2979,
+                        start: 2974,
+                        end: 3012,
                     },
                     Span {
-                        start: 2934,
-                        end: 2980,
+                        start: 2967,
+                        end: 3013,
                     },
                 ],
             },
@@ -1124,91 +1244,123 @@ Module {
                     [13]: Constant(
                         [3],
                     ),
-                    [14]: Splat {
-                        size: Bi,
-                        value: [13],
-                    },
-                    [15]: Constant(
+                    [14]: Constant(
                         [4],
                     ),
-                    [16]: Binary {
-                        op: Equal,
-                        left: [1],
-                        right: [15],
+                    [15]: Compose {
+                        ty: [1],
+                        components: [
+                            [13],
+                            [14],
+                        ],
                     },
-                    [17]: Constant(
+                    [16]: Constant(
                         [5],
                     ),
+                    [17]: Binary {
+                        op: Equal,
+                        left: [1],
+                        right: [16],
+                    },
                     [18]: Constant(
                         [3],
                     ),
-                    [19]: Compose {
-                        ty: [1],
-                        components: [
-                            [17],
-                            [18],
-                        ],
-                    },
-                    [20]: Constant(
-                        [1],
-                    ),
-                    [21]: Binary {
-                        op: Equal,
-                        left: [1],
-                        right: [20],
-                    },
-                    [22]: Constant(
+                    [19]: Constant(
                         [3],
                     ),
+                    [20]: Compose {
+                        ty: [1],
+                        components: [
+                            [18],
+                            [19],
+                        ],
+                    },
+                    [21]: Constant(
+                        [1],
+                    ),
+                    [22]: Binary {
+                        op: Equal,
+                        left: [1],
+                        right: [21],
+                    },
                     [23]: Constant(
-                        [5],
+                        [4],
                     ),
-                    [24]: Compose {
+                    [24]: Constant(
+                        [4],
+                    ),
+                    [25]: Compose {
                         ty: [1],
                         components: [
-                            [22],
                             [23],
+                            [24],
                         ],
                     },
-                    [25]: Constant(
-                        [5],
-                    ),
                     [26]: Constant(
-                        [5],
+                        [4],
                     ),
-                    [27]: Compose {
+                    [27]: Constant(
+                        [3],
+                    ),
+                    [28]: Compose {
                         ty: [1],
                         components: [
-                            [25],
                             [26],
+                            [27],
                         ],
-                    },
-                    [28]: AccessIndex {
-                        base: [9],
-                        index: 1,
                     },
                     [29]: AccessIndex {
                         base: [9],
-                        index: 0,
+                        index: 1,
                     },
-                    [30]: Load {
-                        pointer: [10],
-                    },
+                    [30]: Constant(
+                        [4],
+                    ),
                     [31]: Constant(
                         [6],
                     ),
                     [32]: Constant(
-                        [5],
+                        [7],
                     ),
-                    [33]: Compose {
-                        ty: [3],
+                    [33]: Binary {
+                        op: Divide,
+                        left: [31],
+                        right: [32],
+                    },
+                    [34]: Compose {
+                        ty: [1],
                         components: [
                             [30],
-                            [31],
-                            [32],
+                            [33],
                         ],
                     },
-                    [34]: Load {
+                    [35]: Binary {
+                        op: Multiply,
+                        left: [8],
+                        right: [34],
+                    },
+                    [36]: AccessIndex {
+                        base: [9],
+                        index: 0,
+                    },
+                    [37]: Load {
+                        pointer: [10],
+                    },
+                    [38]: Constant(
+                        [8],
+                    ),
+                    [39]: Constant(
+                        [4],
+                    ),
+                    [40]: Compose {
+                        ty: [3],
+                        components: [
+                            [37],
+                            [38],
+                            [39],
+                        ],
+                    },
+                    [41]: Load {
                         pointer: [9],
                     },
                 },
@@ -1232,98 +1384,98 @@ Module {
                             accept: Block {
                                 body: [
                                     Emit(
-                                        [14..14],
+                                        [15..15],
                                     ),
                                     Store {
                                         pointer: [10],
-                                        value: [14],
+                                        value: [15],
                                     },
                                 ],
                                 span_info: [
                                     Span {
                                         start: 437,
-                                        end: 452,
+                                        end: 457,
                                     },
                                     Span {
                                         start: 426,
-                                        end: 452,
+                                        end: 457,
                                     },
                                 ],
                             },
                             reject: Block {
                                 body: [
                                     Emit(
-                                        [16..16],
+                                        [17..17],
                                     ),
                                     If {
-                                        condition: [16],
+                                        condition: [17],
                                         accept: Block {
                                             body: [
                                                 Emit(
-                                                    [19..19],
+                                                    [20..20],
                                                 ),
                                                 Store {
                                                     pointer: [10],
-                                                    value: [19],
+                                                    value: [20],
                                                 },
                                             ],
                                             span_info: [
                                                 Span {
-                                                    start: 503,
-                                                    end: 523,
+                                                    start: 508,
+                                                    end: 529,
                                                 },
                                                 Span {
-                                                    start: 492,
-                                                    end: 523,
+                                                    start: 497,
+                                                    end: 529,
                                                 },
                                             ],
                                         },
                                         reject: Block {
                                             body: [
                                                 Emit(
-                                                    [21..21],
+                                                    [22..22],
                                                 ),
                                                 If {
-                                                    condition: [21],
+                                                    condition: [22],
                                                     accept: Block {
                                                         body: [
                                                             Emit(
-                                                                [24..24],
+                                                                [25..25],
                                                             ),
                                                             Store {
                                                                 pointer: [10],
-                                                                value: [24],
+                                                                value: [25],
                                                             },
                                                         ],
                                                         span_info: [
                                                             Span {
-                                                                start: 574,
-                                                                end: 594,
+                                                                start: 580,
+                                                                end: 599,
                                                             },
                                                             Span {
-                                                                start: 563,
-                                                                end: 594,
+                                                                start: 569,
+                                                                end: 599,
                                                             },
                                                         ],
                                                     },
                                                     reject: Block {
                                                         body: [
                                                             Emit(
-                                                                [27..27],
+                                                                [28..28],
                                                             ),
                                                             Store {
                                                                 pointer: [10],
-                                                                value: [27],
+                                                                value: [28],
                                                             },
                                                         ],
                                                         span_info: [
                                                             Span {
-                                                                start: 628,
-                                                                end: 647,
+                                                                start: 633,
+                                                                end: 653,
                                                             },
                                                             Span {
-                                                                start: 617,
-                                                                end: 647,
+                                                                start: 622,
+                                                                end: 653,
                                                             },
                                                         ],
                                                     },
@@ -1331,12 +1483,12 @@ Module {
                                             ],
                                             span_info: [
                                                 Span {
-                                                    start: 540,
-                                                    end: 551,
+                                                    start: 546,
+                                                    end: 557,
                                                 },
                                                 Span {
-                                                    start: 531,
-                                                    end: 648,
+                                                    start: 537,
+                                                    end: 654,
                                                 },
                                             ],
                                         },
@@ -1344,39 +1496,42 @@ Module {
                                 ],
                                 span_info: [
                                     Span {
-                                        start: 469,
-                                        end: 480,
+                                        start: 474,
+                                        end: 485,
                                     },
                                     Span {
-                                        start: 460,
-                                        end: 648,
+                                        start: 465,
+                                        end: 654,
                                     },
                                 ],
                             },
                         },
                         Emit(
-                            [28..28],
-                        ),
-                        Store {
-                            pointer: [28],
-                            value: [8],
-                        },
-                        Emit(
-                            [29..30],
+                            [29..29],
                         ),
                         Emit(
-                            [33..33],
+                            [33..35],
                         ),
                         Store {
                             pointer: [29],
-                            value: [33],
+                            value: [35],
                         },
                         Emit(
-                            [34..34],
+                            [36..37],
+                        ),
+                        Emit(
+                            [40..40],
+                        ),
+                        Store {
+                            pointer: [36],
+                            value: [40],
+                        },
+                        Emit(
+                            [41..41],
                         ),
                         Return {
                             value: Some(
-                                [34],
+                                [41],
                             ),
                         },
                     ],
@@ -1395,35 +1550,39 @@ Module {
                         },
                         Span {
                             start: 399,
-                            end: 648,
+                            end: 654,
                         },
                         Span {
-                            start: 659,
-                            end: 673,
+                            start: 665,
+                            end: 679,
                         },
                         Span {
-                            start: 659,
-                            end: 684,
+                            start: 682,
+                            end: 718,
                         },
                         Span {
-                            start: 721,
-                            end: 738,
+                            start: 665,
+                            end: 718,
                         },
                         Span {
-                            start: 741,
-                            end: 770,
+                            start: 755,
+                            end: 772,
                         },
                         Span {
-                            start: 721,
-                            end: 770,
+                            start: 775,
+                            end: 804,
+                        },
+                        Span {
+                            start: 755,
+                            end: 804,
                         },
                         Span {
                             start: 0,
                             end: 0,
                         },
                         Span {
-                            start: 776,
-                            end: 787,
+                            start: 810,
+                            end: 821,
                         },
                     ],
                 },
@@ -1498,12 +1657,12 @@ Module {
                     ],
                     span_info: [
                         Span {
-                            start: 4434,
-                            end: 4449,
+                            start: 6713,
+                            end: 6728,
                         },
                         Span {
-                            start: 4427,
-                            end: 4450,
+                            start: 6706,
+                            end: 6729,
                         },
                     ],
                 },
@@ -2108,6 +2267,66 @@ ModuleInfo {
                     ty: Value(
                         Vector {
                             size: Quad,
+                            kind: Uint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Uint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Sint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
                             kind: Float,
                             width: 4,
                         },
@@ -2184,6 +2403,66 @@ ModuleInfo {
                     ty: Value(
                         Vector {
                             size: Quad,
+                            kind: Uint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Uint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Sint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
                             kind: Float,
                             width: 4,
                         },
@@ -2290,6 +2569,66 @@ ModuleInfo {
                     ty: Value(
                         Vector {
                             size: Quad,
+                            kind: Uint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Uint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Sint,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
                             kind: Float,
                             width: 4,
                         },
@@ -2330,39 +2669,7 @@ ModuleInfo {
                         non_uniform_result: None,
                         requirements: (empty),
                     },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
+                    ref_count: 2,
                     assignable_global: None,
                     ty: Value(
                         Scalar {
@@ -2390,55 +2697,7 @@ ModuleInfo {
                         non_uniform_result: None,
                         requirements: (empty),
                     },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
+                    ref_count: 2,
                     assignable_global: None,
                     ty: Value(
                         Scalar {
@@ -2452,173 +2711,7 @@ ModuleInfo {
                         non_uniform_result: None,
                         requirements: (empty),
                     },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: None,
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: None,
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: None,
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: None,
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: None,
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(
-                        Scalar {
-                            kind: Float,
-                            width: 4,
-                        },
-                    ),
-                },
-                ExpressionInfo {
-                    uniformity: Uniformity {
-                        non_uniform_result: Some(
-                            [1],
-                        ),
-                        requirements: (empty),
-                    },
-                    ref_count: 1,
+                    ref_count: 2,
                     assignable_global: None,
                     ty: Value(
                         Scalar {
@@ -2768,6 +2861,160 @@ ModuleInfo {
                         non_uniform_result: Some(
                             [1],
                         ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
                         requirements: (empty),
                     },
                     ref_count: 1,
@@ -3112,11 +3359,21 @@ ModuleInfo {
                     ref_count: 1,
                     assignable_global: None,
                     ty: Value(
-                        Vector {
-                            size: Bi,
+                        Scalar {
                             kind: Float,
                             width: 4,
                         },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(
+                        [1],
                     ),
                 },
                 ExpressionInfo {
@@ -3310,6 +3567,86 @@ ModuleInfo {
                             base: [1],
                             space: Function,
                         },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Value(
+                        Scalar {
+                            kind: Float,
+                            width: 4,
+                        },
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: None,
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(
+                        [1],
+                    ),
+                },
+                ExpressionInfo {
+                    uniformity: Uniformity {
+                        non_uniform_result: Some(
+                            [1],
+                        ),
+                        requirements: (empty),
+                    },
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(
+                        [1],
                     ),
                 },
                 ExpressionInfo {

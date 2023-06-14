@@ -45,7 +45,7 @@ impl Texture {
             depth_or_array_layers: 1,
         };
 
-        let format = wgpu::TextureFormat::R8Unorm;//wgpu::TextureFormat::Rgba8UnormSrgb;
+        let format = wgpu::TextureFormat::R8Uint;//wgpu::TextureFormat::Rgba8UnormSrgb;
         let texture = device.create_texture(&wgpu::TextureDescriptor {
             label,
             size,
@@ -53,7 +53,7 @@ impl Texture {
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
             format,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::COPY_SRC,
             view_formats: &[],
         });
 
@@ -109,7 +109,7 @@ impl Texture {
             depth_or_array_layers: 1,
         };
 
-        let format = wgpu::TextureFormat::R8Unorm;//wgpu::TextureFormat::Rgba8UnormSrgb;
+        let format = wgpu::TextureFormat::R8Uint;//wgpu::TextureFormat::Rgba8UnormSrgb;
         let texture = device.create_texture(&wgpu::TextureDescriptor {
             label,
             size,

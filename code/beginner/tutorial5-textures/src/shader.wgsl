@@ -32,159 +32,72 @@ fn vs_main(
 
 // Fragment shader
 @group(0) @binding(0)
-var t_diffuse: texture_2d<f32>;
+var t_diffuse: texture_2d<u32>;
 @group(0)@binding(1)
 var s_diffuse: sampler;
 
-// @fragment
-// fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
-//     return vec4(in.tex_coords.x, in.tex_coords.y, 0.0, 1.0);
-//     // return textureSample(t_diffuse, s_diffuse, in.tex_coords);
-// }
-
-// fn decode_nv12(in: VertexOutput) -> vec4<f32> {
-//     let width = 1920.0;
-//     let height = 1080.0;
-//     let uv_offset = height / (1.5 * height);
-//     let uv_col = floor(in.tex_coords.x * width / 2.0);
-//     let y = textureSample(t_diffuse, s_diffuse, in.tex_coords);
-//     let u = textureSample(t_diffuse, s_diffuse, vec2<f32>(uv_col*2.0 / width, in.tex_coords.y + uv_offset));
-//     let v = textureSample(t_diffuse, s_diffuse, vec2<f32>((uv_col*2.0+1.0) / width, in.tex_coords.y + uv_offset));
-//     let r = 1.164 * (y.r - 0.0625) + 1.596 * (u.r - 0.5);
-//     let g = 1.164 * (y.r - 0.0625) - 0.183 * (u.r - 0.5) - 0.391 * (v.r - 0.5);
-//     let b = 1.164 * (y.r - 0.0625) + 1.596 * (v.r - 0.5);
-//     return vec4(r, g, b, 1.0);
-// }
-
 fn decode_nv12(in: VertexOutput) -> vec4<f32> {
-    // let width = 1920.0;
-    // let height = 1080.0;
-    // let uv_offset: u32 = u32(height);
-    // let uv_row: u32 = u32(floor(in.tex_coords.y * height * 1.5) / 2.0);
-    // let uv_col: u32 = u32(floor(in.tex_coords.x * width / 2.0) * 2.0); // 2.0 because we need two pixels for one UV pair
-    // let tex_coords = vec2<u32>(in.tex_coords * vec2<f32>(width, height * 1.5));
-    // let y = textureLoad(t_diffuse, tex_coords, 0);
-    // let u = textureLoad(t_diffuse, vec2<u32>(uv_col, uv_offset + uv_row), 0);
-    // let v = textureLoad(t_diffuse, vec2<u32>((uv_col + 1u), uv_offset + uv_row), 0);
-    // // let r = y.r + 1.13983 * (v.r - 0.5);
-    // // let g = y.r - 0.39465 * (u.r - 0.5) - 0.58060 * (v.r - 0.5);
-    // // let b = y.r + 2.03211 * (u.r - 0.5);
-    // let r = 1.164 * (y.r - 0.0625) + 1.596 * (v.r - 0.5);
-    // let g = 1.164 * (y.r - 0.0625) - 0.183 * (v.r - 0.5) - 0.391 * (u.r - 0.5);
-    // let b = 1.164 * (y.r - 0.0625) + 1.596 * (u.r - 0.5);
-    // return vec4(r, g, b, 1.0);
     return _decode_nv12(t_diffuse, in.tex_coords);
 }
 
 
-fn _decode_nv12(texture: texture_2d<f32>, in_tex_coords: vec2<f32>) -> vec4<f32> {
-    let texture_dim = vec2<f32>(textureDimensions(texture).xy);
-    let uv_offset = u32(texture_dim.y / 1.5);
+fn _decode_nv12(texture: texture_2d<u32>, in_tex_coords: vec2<f32>) -> vec4<f32> {
+    let texture_dim = vec2<f32>(textureDimensions(texture).xy); // 1920 , 1080 * 1.5
+    let uv_offset = u32(floor(texture_dim.y / 1.5));
     let uv_row = u32(floor(in_tex_coords.y * texture_dim.y) / 2.0);
-    let uv_col = u32(floor(in_tex_coords.x * texture_dim.x / 2.0) * 2.0); // 2.0 because we need two pixels for one UV pair
+    // let uv_col = u32(floor(in_tex_coords.x * texture_dim.x) / 2.0) * 2u; // 2.0 because we need two pixels for one UV pair
+
+    var uv_col = u32(floor(in_tex_coords.x * texture_dim.x / 2.0)) * 2u;
+
     let tex_coords = vec2<f32>(in_tex_coords * vec2<f32>(texture_dim.x, texture_dim.y));
-    let coords = vec2<u32>(u32(tex_coords.x), u32(tex_coords.y));
-    let y = textureLoad(texture, coords, 0).r;
-    let u = textureLoad(texture, vec2<u32>(uv_col, uv_offset + uv_row), 0).r;
-    let v = textureLoad(texture, vec2<u32>((uv_col + 1u), uv_offset + uv_row), 0).r;
-    // let r = y + 1.13983 * (v - 0.5);
-    // let g = y - 0.39465 * (u - 0.5) - 0.58060 * (v - 0.5);
-    // let b = y + 2.03211 * (u - 0.5);
-    // let r = 1.164383 * (y - 0.0625) + 1.596027 * (v - 0.5);
-    // let g = 1.164383 * (y - 0.0625) - (0.391762 * (u - 0.5)) - (0.812968 * (v - 0.5));
-    // let b = 1.164383 * (y - 0.0625) + 2.017232 * (u - 0.5);
-    // let r = y + 1.370705 * (v - 0.5);
-    // let g = y - 0.698001 * (u - 0.5) - 0.337633 * (v - 0.5);
-    // let b = y + 1.732446 * (u - 0.5);
+    let coords = vec2<u32>(floor(tex_coords.xy));
+    var y = f32(textureLoad(texture, coords, 0).r);
+    var u = (f32(textureLoad(texture, vec2<u32>(u32(uv_col), uv_offset + uv_row), 0).r));
+    var v = (f32(textureLoad(texture, vec2<u32>((u32(uv_col) + 1u), uv_offset + uv_row), 0).r));
 
-    let r = y + 1.402 * (v - 0.5);
-    let g = y - 0.344136 * (u - 0.5) - 0.714136 * (v - 0.5);
-    let b = y + 1.772 * (u - 0.5);
+    // if y == 128.0 {
+    //     return vec4(0.0, 0.0, 1.0, 1.0);
+    // }
 
-    return vec4(r, g, b, 1.0);
-    // return vec4(0.0, 0.0, 1.0, 1.0);
+    // if u == 128.0 && v == 12.0 {
+    //     return vec4(0.0, 1.0, 0.0, 1.0);
+    // }
+    // if u == 10.0 && v == 15.0 {
+    //     return vec4(0.0, 0.0, 1.0, 1.0);
+    // }
+
+    u = (u - 128.0) / 224.0;
+    v = (v - 128.0) / 224.0;
+
+    y = (y - 16.0) / 219.0;
+
+    var red = y + 1.402 * v;
+    var green = y  - (0.344 * u + 0.714 * v);
+    var blue = y + 1.772 * u;
+
+    // let a = /*0.2627;*/ /*0.2126;*/ 0.299;
+    // let b = /*0.6780;*/ /*0.7152;*/ 0.587;
+    // let c = /*0.0593;*/ /*0.0722;*/ 0.114;
+    // let d = /*1.8814;*/ /*1.8556;*/ 1.772;
+    // let e = /*1.4746;*/ /*1.5748;*/ 1.402;
+
+    // let red = y + e * (v);
+    // let green = y - (a * e / b) * (u) - (c * d / b) * (v);
+    // let blue = y + d * (u);
+    return vec4(red, green, blue, 1.0);
+    // return vec4(pow(red, 2.2), pow(green, 2.2), pow(blue, 2.2), 1.0);
 }
 
-/*
-// y = 0.299f * r[i] + 0.587f * g[i] + 0.114f * b[i];
-// u1 = (int)(((float)b[i] - y) * 0.564f) + 128;
-// v1 = (int)(((float)r[i] - y) * 0.713f) + 128;
-// [0.299, 
-]
-*/
-/*
-NV12 img
-| 0 | 1 | 2 | 3 |
-| 4 | 5 | 6 | 7 |
-| 8 | 9 | 10| 11|
-| 12| 13| 14| 15|
-| u0| v0| u1| v1|
-| u2| v2| u3| v3|
+//  r =  yy + (int)(1.402f*v);
 
-p0 -> tex(0, 0) -> u = tex(0, p0.y + 4 / 6)
-p4 -> tex(0, 1/6) -> u = tex(0, p4.y )
-*/
+//             RGBi[RGBidx++] = (uint8_t) (r > 255 ? 255 : r < 0 ? 0 : r);
+//             g =  yy - (int)(0.344f*u + 0.714*v);
+
+//             RGBi[RGBidx++] = (uint8_t) (g > 255 ? 255 : g < 0 ? 0 : g);
+//             b =  yy + (int)(1.772f*u);
 
 
 @fragment
 fn fs_main(in: VertexOutput) -> @location(0) vec4<f32> {
     return decode_nv12(in);
-    // let width = 3840.0;
-    // let height = 2160.0;
-
-    // let width = 256.0;
-    // let height = 256.0;
-    // 256x256
-
-    // let width = 1920.0;
-    // let height = 1080.0;
-
-    // let img_col = floor(in.tex_coords.x * width);
-    // let img_row = floor(in.tex_coords.y * height);
-
-    // let flat_index_r = img_row * (width * 3.0) + img_col * 3.0;
-    // let flat_index_g = flat_index_r + 1.0;
-    // let flat_index_b = flat_index_r + 2.0;
-
-    // let tex_coords_r = vec2(flat_index_r % (width * 3.0) / (width * 3.0), in.tex_coords.y);
-    // let tex_coords_g = vec2(flat_index_g % (width * 3.0) / (width * 3.0), in.tex_coords.y);
-    // let tex_coords_b = vec2(flat_index_b % (width * 3.0) / (width * 3.0), in.tex_coords.y);
-
-    // // let tex_coords_r = vec2(in.tex_coords.x * 3.0, in.tex_coords.y);
-    // // let tex_coords_g = vec2(in.tex_coords.x * 3.0 + 1.0 / (width * 3.0), in.tex_coords.y);
-    // // let tex_coords_b = vec2(in.tex_coords.x * 3.0 + 2.0 / (width * 3.0), in.tex_coords.y);
-    
-    // // let tex_coords_r = vec2(in.tex_coords.x, in.tex_coords.y);
-    // // let tex_coords_g = vec2(in.tex_coords.x + 1.0 / (width*3.0), in.tex_coords.y);
-    // // let tex_coords_b = vec2(in.tex_coords.x + 2.0 / (width*3.0), in.tex_coords.y);
-
-    // // let tex_coords_r = in.tex_coords;
-    // // let tex_coords_g = in.tex_coords;
-    // // let tex_coords_b = in.tex_coords;
-    // let r = textureSample(t_diffuse, s_diffuse, tex_coords_r);
-    // let g = textureSample(t_diffuse, s_diffuse, tex_coords_g);
-    // let b = textureSample(t_diffuse, s_diffuse, tex_coords_b);
-    // return vec4(r.r, g.r, b.r, 1.0);
 }
-
-/*
-RGB img
-| 0 | 1 | 2 | 3 |
-| 4 | 5 | 6 | 7 |
-| 8 | 9 | 10| 11|
-| 12| 13| 14| 15|
-
-4x4 RGB in R8 texture
-| r0 | g0 | b0 | r1 | g1 | b1 | r2 | g2 | b2 | r3 | g3 | b3 |
-| r4 | g4 | b4 | r5 | g5 | b5 | r6 | g6 | b6 | r7 | g7 | b7 |
-| r8 | g8 | b8 | r9 | g9 | b9 | r10| g10| b10| r11| g11| b11|
-| r12| g12| b12| r13| g13| b13| r14| g14| b14| r15| g15| b15|
-
-p0 -> frag (0, 0) -> tex(0,0), tex(1/12, 0), tex(2/12, 0)
-p1 -> frag (0.25, 0) -> tex(3/12, 0), tex(4/12, 0), tex(5/12, 0)
-p2 -> frag (0.5, 0) -> tex(6/12, 0), tex(7/12, 0), tex(8/12, 0)
-p3 -> frag (0.75, 0) -> tex(9/12, 0), tex(10/12, 0), tex(11/12, 0)
-p4 -> frag (0, 0.25) -> tex(0, 1/4), tex(1/12, 1/4), tex(2/12, 1/4)
-
-This isn't the case tho, this will fail for 4k because texture width will be too big....
-*/
